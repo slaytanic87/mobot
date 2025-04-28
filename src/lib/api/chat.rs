@@ -90,10 +90,80 @@ impl SendChatActionRequest {
     }
 }
 
-/// API methods for sending, editing, and deleting messages.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChatPermissions {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_messages: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_audios: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_documents: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_photos: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_videos: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_video_notes: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_voice_notes: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_polls: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_send_other_messages: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_add_web_page_previews: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_change_info: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_invite_users: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_pin_messages: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub can_manage_topics: Option<bool>
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, BotRequest)]
+pub struct SetChatPermissionRequest {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: String,
+    pub permissions: ChatPermissions,
+    pub use_independent_chat_permissions: Option<bool>
+}
+
+impl SetChatPermissionRequest {
+    pub fn new(chat_id: String, permissions: ChatPermissions, use_independent_chat_permissions: Option<bool>) -> Self {
+        Self {
+            chat_id,
+            permissions,
+            use_independent_chat_permissions
+        }
+    }
+}
+
+/// API methods for sending, editing, set message permission, and deleting messages.
 impl API {
     /// Send a message.
     pub async fn send_chat_action(&self, req: &SendChatActionRequest) -> anyhow::Result<bool> {
         self.client.post("sendChatAction", req).await
+    }
+
+    /// Use this method to set default chat permissions for all members.
+    /// The bot must be an administrator in the group or a supergroup for this to work and must have the can_restrict_members administrator rights.
+    /// Returns True on success
+    pub async fn set_chat_permissions(&self, req: &SetChatPermissionRequest) -> anyhow::Result<bool> {
+        self.client.post("setChatPermissions", req).await
     }
 }
