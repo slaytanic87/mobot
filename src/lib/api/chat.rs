@@ -143,6 +143,26 @@ pub struct SetChatPermissionRequest {
     pub use_independent_chat_permissions: Option<bool>
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, BotRequest)]
+pub struct RestrictChatMemberRequest {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: String,
+
+    /// Unique identifier of the target user
+    pub user_id: i64,
+
+    /// A JSON-serialized object for new user permissions
+    pub permissions: ChatPermissions,
+
+    /// Pass True if the chat permissions are set independently.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub use_independent_chat_permissions: Option<bool>,
+
+    /// Date when restrictions will be lifted for the user; Unix time. If user is restricted for more than 366 days or less than 30 seconds from the current time, they are considered to be restricted forever
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub until_date: Option<i64>
+}
+
 impl SetChatPermissionRequest {
     pub fn new(chat_id: String, permissions: ChatPermissions, use_independent_chat_permissions: Option<bool>) -> Self {
         Self {
@@ -165,5 +185,13 @@ impl API {
     /// Returns True on success
     pub async fn set_chat_permissions(&self, req: &SetChatPermissionRequest) -> anyhow::Result<bool> {
         self.client.post("setChatPermissions", req).await
+    }
+
+    /// Use this method to restrict a user in a supergroup.
+    /// The bot must be an administrator in the supergroup for this to work and must have the appropriate administrator rights.
+    /// Pass True for all permissions to lift restrictions from a user.
+    /// Returns True on success.
+    pub async fn restrict_chat_member(&self, req: &RestrictChatMemberRequest) -> anyhow::Result<bool> {
+        self.client.post("restrictChatMember", req).await
     }
 }
