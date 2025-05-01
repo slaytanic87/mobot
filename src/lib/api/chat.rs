@@ -1,6 +1,6 @@
 use mobot_derive::BotRequest;
 use serde::{Deserialize, Serialize};
-
+use super::user::User;
 use super::API;
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
@@ -173,6 +173,64 @@ impl SetChatPermissionRequest {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, BotRequest)]
+pub struct GetChatAdministratorsRequest {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @channelusername)
+    pub chat_id: String,
+}
+
+impl GetChatAdministratorsRequest {
+    pub fn new(chat_id: String) -> Self {
+        Self { chat_id }
+    }
+}
+
+#[derive(Default, Debug, Clone, Deserialize, Serialize)]
+pub struct ChatMemberAdministrator {
+    /// The member's status in the chat, always “administrator”
+    pub status: String,
+    /// Information about the user
+    pub user: User,
+    /// True, if the bot is allowed to edit administrator privileges of that user
+    pub can_be_edited: bool,
+    /// True, if the user's presence in the chat is hidden
+    pub is_anonymous: bool,
+    /// True, if the administrator can access the chat event log, get boost list,
+    /// see hidden supergroup and channel members, report spam messages and ignore slow mode.
+    /// Implied by any other administrator privilege.
+    pub can_manage_chat: bool,
+    /// True, if the administrator can delete messages of other users
+    pub can_delete_messages: bool,
+    /// True, if the administrator can manage video chats
+    pub can_manage_video_chats: bool,
+    /// True, if the administrator can restrict, ban or unban chat members, or access supergroup statistics
+    pub can_restrict_members: bool,
+    /// True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that they have promoted,
+    /// directly or indirectly (promoted by administrators that were appointed by the user)
+    pub can_promote_members: bool,
+    /// True, if the administrator can change chat title, photo and other settings
+    pub can_change_info: bool,
+    /// True, if the administrator can invite new users to the chat
+    pub can_invite_users: bool,
+    /// True, if the administrator can post stories to the chat
+    pub can_post_stories: bool,
+    /// True, if the administrator can edit stories posted by other users,
+    /// post stories to the chat page, pin chat stories, and access the chat's story archive
+    pub can_edit_stories: bool,
+    /// True, if the administrator can delete stories posted by other users
+    pub can_delete_stories: bool,
+    /// Optional. True, if the administrator can post messages in the channel, or access channel statistics; for channels only
+    pub can_post_messages: Option<bool>,
+    /// Optional. True, if the administrator can edit messages of other users and can pin messages; for channels only
+    pub can_edit_messages: Option<bool>,
+    /// Optional. True, if the user is allowed to pin messages; for groups and supergroups only
+    pub can_pin_messages: Option<bool>,
+    /// Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
+    pub can_manage_topics: Option<bool>,
+    /// Optional. Custom title for this user
+    pub custom_title: Option<String>
+}
+
 /// API methods for sending, editing, set message permission, and deleting messages.
 impl API {
     /// Send a message.
@@ -193,5 +251,10 @@ impl API {
     /// Returns True on success.
     pub async fn restrict_chat_member(&self, req: &RestrictChatMemberRequest) -> anyhow::Result<bool> {
         self.client.post("restrictChatMember", req).await
+    }
+
+    /// Use this method to get a list of administrators in a chat, which aren't bots. Returns an Array of ChatMember objects.
+    pub async fn get_chat_administrators(&self, req: &GetChatAdministratorsRequest) -> anyhow::Result<Vec<ChatMemberAdministrator>> {
+        self.client.post("getChatAdministrators", req).await
     }
 }
