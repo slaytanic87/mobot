@@ -143,6 +143,16 @@ pub struct SetChatPermissionRequest {
     pub use_independent_chat_permissions: Option<bool>
 }
 
+impl SetChatPermissionRequest {
+    pub fn new(chat_id: String, permissions: ChatPermissions, use_independent_chat_permissions: Option<bool>) -> Self {
+        Self {
+            chat_id,
+            permissions,
+            use_independent_chat_permissions
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, BotRequest)]
 pub struct RestrictChatMemberRequest {
     /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -163,14 +173,17 @@ pub struct RestrictChatMemberRequest {
     pub until_date: Option<i64>
 }
 
-impl SetChatPermissionRequest {
-    pub fn new(chat_id: String, permissions: ChatPermissions, use_independent_chat_permissions: Option<bool>) -> Self {
+impl RestrictChatMemberRequest {
+    pub fn new(chat_id: String, user_id: i64, permissions: ChatPermissions, use_independent_chat_permissions: Option<bool>, until_date: Option<i64>) -> Self {
         Self {
             chat_id,
+            user_id,
             permissions,
-            use_independent_chat_permissions
+            use_independent_chat_permissions,
+            until_date
         }
     }
+
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, BotRequest)]
