@@ -141,6 +141,9 @@ pub struct SendMessageRequest {
     /// Unique identifier for the target chat or username of the target
     pub chat_id: i64,
 
+    /// Optional	Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+    pub message_thread_id: Option<i64>,
+
     /// Text of the message to be sent
     pub text: String,
 
@@ -165,7 +168,11 @@ impl SendMessageRequest {
             ..Default::default()
         }
     }
-
+    pub fn with_message_thread_id(mut self, message_thread_id: i64) -> Self {
+        self.message_thread_id = Some(message_thread_id);
+        self
+    }
+    
     pub fn with_reply_markup(mut self, reply_markup: ReplyMarkup) -> Self {
         self.reply_markup = Some(reply_markup);
         self
