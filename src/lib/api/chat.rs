@@ -205,33 +205,33 @@ pub struct ChatMemberAdministrator {
     /// Information about the user
     pub user: User,
     /// True, if the bot is allowed to edit administrator privileges of that user
-    pub can_be_edited: bool,
+    pub can_be_edited: Option<bool>,
     /// True, if the user's presence in the chat is hidden
-    pub is_anonymous: bool,
+    pub is_anonymous: Option<bool>,
     /// True, if the administrator can access the chat event log, get boost list,
     /// see hidden supergroup and channel members, report spam messages and ignore slow mode.
     /// Implied by any other administrator privilege.
-    pub can_manage_chat: bool,
+    pub can_manage_chat: Option<bool>,
     /// True, if the administrator can delete messages of other users
-    pub can_delete_messages: bool,
+    pub can_delete_messages: Option<bool>,
     /// True, if the administrator can manage video chats
-    pub can_manage_video_chats: bool,
+    pub can_manage_video_chats: Option<bool>,
     /// True, if the administrator can restrict, ban or unban chat members, or access supergroup statistics
-    pub can_restrict_members: bool,
+    pub can_restrict_members: Option<bool>,
     /// True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that they have promoted,
     /// directly or indirectly (promoted by administrators that were appointed by the user)
-    pub can_promote_members: bool,
+    pub can_promote_members: Option<bool>,
     /// True, if the administrator can change chat title, photo and other settings
-    pub can_change_info: bool,
+    pub can_change_info: Option<bool>,
     /// True, if the administrator can invite new users to the chat
-    pub can_invite_users: bool,
+    pub can_invite_users: Option<bool>,
     /// True, if the administrator can post stories to the chat
-    pub can_post_stories: bool,
+    pub can_post_stories: Option<bool>,
     /// True, if the administrator can edit stories posted by other users,
     /// post stories to the chat page, pin chat stories, and access the chat's story archive
-    pub can_edit_stories: bool,
+    pub can_edit_stories: Option<bool>,
     /// True, if the administrator can delete stories posted by other users
-    pub can_delete_stories: bool,
+    pub can_delete_stories: Option<bool>,
     /// Optional. True, if the administrator can post messages in the channel, or access channel statistics; for channels only
     pub can_post_messages: Option<bool>,
     /// Optional. True, if the administrator can edit messages of other users and can pin messages; for channels only
