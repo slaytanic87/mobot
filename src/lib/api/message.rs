@@ -11,6 +11,10 @@ pub struct Message {
     /// Unique message identifier inside this chat
     pub message_id: i64,
 
+    /// Optional. Unique identifier of a message thread to which the message belongs; for supergroups only
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message_thread_id: Option<i64>,
+
     /// Sender, empty for messages sent to channels
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<User>,
