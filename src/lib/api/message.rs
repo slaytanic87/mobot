@@ -4,6 +4,20 @@ use serde::{Deserialize, Serialize};
 
 use super::{chat::Chat, sticker::Sticker, user::User, Document, PhotoSize, ReplyMarkup, API};
 
+/// This object represents a service message about a new forum topic created in the chat.
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ForumTopicCreated {
+    /// Name of the topic
+    pub name: String,
+
+    /// Color of the topic icon in RGB format
+    pub icon_color: i64,
+
+    /// Emoji associated with the topic icon
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon_custom_emoji_id: Option<String>,
+}
+
 /// `Message` represents a message sent in a chat. It can be a text message, a sticker, a photo, etc.
 /// <https://core.telegram.org/bots/api#message>
 #[derive(Default, Debug, Clone, Deserialize, Serialize)]
@@ -71,6 +85,10 @@ pub struct Message {
     /// Sticker for messages with a sticker
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sticker: Option<Sticker>,
+
+    /// Optional. Service message: forum topic created
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub forum_topic_created: Option<ForumTopicCreated>,
 
     /// Inline keyboard attached to the message.
     #[serde(flatten, skip_serializing_if = "Option::is_none")]
