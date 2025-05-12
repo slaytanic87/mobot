@@ -244,6 +244,60 @@ pub struct ChatMemberAdministrator {
     pub custom_title: Option<String>
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, BotRequest)]
+pub struct BanChatMemberRequest {
+    /// Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
+    pub chat_id: String,
+
+    /// Unique identifier of the target user
+    pub user_id: i64,
+
+    /// Date when the user will be unbanned; Unix time.
+    /// If user is banned for more than 366 days or less than 30 seconds from the current time they are considered to be banned forever.
+    /// Applied for supergroups and channels only.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub until_date: Option<i64>,
+
+    /// Pass True to delete all messages from the chat for the user that is being removed.
+    /// If False, the user will be able to see messages in the group that were sent before the user was removed.
+    /// Always True for supergroups and channels.
+    pub revoke_messages: Option<bool>,
+}
+
+impl BanChatMemberRequest {
+    pub fn new(chat_id: String, user_id: i64, until_date: Option<i64>, revoke_messages: Option<bool>) -> Self {
+        Self {
+            chat_id,
+            user_id,
+            until_date,
+            revoke_messages
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, BotRequest)]
+pub struct UnbanChatMemberRequest {
+    /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+    pub chat_id: String,
+
+    /// Unique identifier of the target user
+    pub user_id: i64,
+
+    /// Pass True if the bot's administrator rights are restricted in the supergroup.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub only_if_banned: Option<bool>,
+}
+
+impl UnbanChatMemberRequest {
+    pub fn new(chat_id: String, user_id: i64, only_if_banned: Option<bool>) -> Self {
+        Self {
+            chat_id,
+            user_id,
+            only_if_banned
+        }
+    }
+}
+
 /// API methods for sending, editing, set message permission, and deleting messages.
 impl API {
     /// Send a message.
@@ -269,5 +323,22 @@ impl API {
     /// Use this method to get a list of administrators in a chat, which aren't bots. Returns an Array of ChatMember objects.
     pub async fn get_chat_administrators(&self, req: &GetChatAdministratorsRequest) -> anyhow::Result<Vec<ChatMemberAdministrator>> {
         self.client.post("getChatAdministrators", req).await
+    }
+
+    /// Use this method to unban a previously banned user in a supergroup or channel.
+    /// The user will not return to the group or channel automatically, but will be able to join via link, etc.
+    /// The bot must be an administrator for this to work. By default, this method guarantees that after the call the user is not a member of the chat, but will be able to join it.
+    /// So if the user is a member of the chat they will also be removed from the chat.
+    /// If you don't want this, use the parameter only_if_banned. Returns True on success.
+    pub async fn unban_chat_member(&self, req: &UnbanChatMemberRequest) -> anyhow::Result<bool> {
+        self.client.post("unbanChatMember", req).await
+    }
+
+    /// Use this method to ban a user in a group, a supergroup or a channel.
+    /// In the case of supergroups and channels, the user will not be able to return to the chat on their own using invite links, etc., unless unbanned first.
+    /// The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights.
+    /// Returns True on success.
+    pub async fn ban_chat_member(&self, req: &BanChatMemberRequest) -> anyhow::Result<bool> {
+        self.client.post("banChatMember", req).await
     }
 }
