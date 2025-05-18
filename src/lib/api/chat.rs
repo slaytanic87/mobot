@@ -245,6 +245,47 @@ pub struct ChatMemberAdministrator {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, BotRequest)]
+pub struct GetChatRequest {
+    /// Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+    pub chat_id: String,
+}
+
+impl GetChatRequest {
+    pub fn new(chat_id: String) -> Self {
+        Self { chat_id }
+    }
+}
+
+/// This object contains full information about a chat.
+#[derive(Default, Debug, Clone, Deserialize, Serialize)]
+pub struct ChatFullInfo {
+    /// Unique identifier for this chat. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it.
+    /// But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this identifier.
+    pub id: i64,
+    /// Type of chat, can be either “private”, “group”, “supergroup” or “channel”
+    #[serde(rename = "type")]
+    pub type_: String,
+    /// Title for supergroups, channels and group chats
+    pub title: Option<String>,
+    /// Username, for private chats, supergroups and channels if available
+    pub username: Option<String>,
+    /// First name of the other party in a private chat
+    pub first_name: Option<String>,
+    /// Last name of the other party in a private chat
+    pub last_name: Option<String>,
+    /// True, if the supergroup is a forum (has topics enabled)
+    pub is_forum: Option<bool>,
+    /// Identifier of the accent color for the chat name and backgrounds of the chat photo, reply header, and link preview. See accent colors for more details.
+    pub accent_color: i64,
+    /// The maximum number of reactons that can be set on a message in the chat.
+    pub max_reaction_count: i64,
+    /// If non-empty, the list of all active chat usernames; for private chats, supergroups, and channels
+    pub active_usernames: Option<Vec<String>>,
+    /// Description, for groups, supergroups and channel chats
+    pub description: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, BotRequest)]
 pub struct BanChatMemberRequest {
     /// Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
     pub chat_id: String,
@@ -323,6 +364,11 @@ impl API {
     /// Use this method to get a list of administrators in a chat, which aren't bots. Returns an Array of ChatMember objects.
     pub async fn get_chat_administrators(&self, req: &GetChatAdministratorsRequest) -> anyhow::Result<Vec<ChatMemberAdministrator>> {
         self.client.post("getChatAdministrators", req).await
+    }
+
+    /// Use this method to get up-to-date information about the chat. Returns a ChatFullInfo object on success.
+    pub async fn get_chat(&self, req: &GetChatRequest) -> anyhow::Result<ChatFullInfo> {
+        self.client.post("getChat", req).await
     }
 
     /// Use this method to unban a previously banned user in a supergroup or channel.
