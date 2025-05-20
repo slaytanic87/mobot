@@ -276,9 +276,9 @@ pub struct ChatFullInfo {
     /// True, if the supergroup is a forum (has topics enabled)
     pub is_forum: Option<bool>,
     /// Identifier of the accent color for the chat name and backgrounds of the chat photo, reply header, and link preview. See accent colors for more details.
-    pub accent_color: i64,
+    pub accent_color: Option<i64>,
     /// The maximum number of reactons that can be set on a message in the chat.
-    pub max_reaction_count: i64,
+    pub max_reaction_count: Option<i64>,
     /// If non-empty, the list of all active chat usernames; for private chats, supergroups, and channels
     pub active_usernames: Option<Vec<String>>,
     /// Description, for groups, supergroups and channel chats
