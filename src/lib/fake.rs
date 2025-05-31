@@ -3,7 +3,7 @@
 /// can be used to test bots.
 use anyhow::Result;
 use async_trait::async_trait;
-use rand::distributions::Alphanumeric;
+use rand::distr::Alphanumeric;
 use rand::Rng;
 use std::{collections::HashMap, sync::Arc, time::Duration};
 use tokio::sync::{mpsc, Mutex};
@@ -74,7 +74,7 @@ impl FakeChat {
 
         Ok(chat_tx
             .send(Update::CallbackQuery(api::CallbackQuery {
-                id: rand::thread_rng()
+                id: rand::rng()
                     .sample_iter(&Alphanumeric)
                     .take(7)
                     .map(char::from)
