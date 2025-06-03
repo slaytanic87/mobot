@@ -2,7 +2,7 @@ use std::fmt::{self, Formatter};
 
 use anyhow::Result;
 use bytes;
-use derive_more::*;
+use derive_more::{From, Into, FromStr, Display};
 use serde::{de::DeserializeOwned, Serialize};
 
 use crate::api::ApiResponse;
