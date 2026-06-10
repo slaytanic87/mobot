@@ -4,7 +4,7 @@
 use anyhow::Result;
 use async_trait::async_trait;
 use rand::distr::Alphanumeric;
-use rand::Rng;
+use rand::RngExt;
 use std::{collections::HashMap, sync::Arc, time::Duration};
 use tokio::sync::{mpsc, Mutex};
 

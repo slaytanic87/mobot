@@ -13,21 +13,21 @@ name = "mobot"
 path = "src/lib/lib.rs"
 
 [dependencies]
-argh = "0.1"
-env_logger = "0.11"
-log = "0.4"
+argh = "0.1.19"
+env_logger = "0.11.10"
+log = "0.4.32"
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-tokio = { version = "1", features = ["full"] }
+serde_json = "1.0.150"
+tokio = { version = "1.52.3", features = ["full"] }
 lazy_static = "1.4"
-rand = "0.9"
-reqwest = {version = "0.12", features = ["json"]}
-anyhow = "1"
-thiserror = "2"
-derive_more = {version = "2.0.1", features = ["full"]}
-futures = "0.3"
-async-trait = "0.1.68"
-chrono = "0.4.24"
+rand = "0.10.1"
+reqwest = {version = "0.13.4", features = ["json"]}
+anyhow = "1.0.102"
+thiserror = "2.0.18"
+derive_more = {version = "2.1.1", features = ["full"]}
+futures = "0.3.32"
+async-trait = "0.1.89"
+chrono = "0.4.45"
 regex = "1.8.2"
 mobot-derive = { version = "0.1.0", path = "mobot-derive" }
-bytes = "1.4.0"
+bytes = "1.11.1"
