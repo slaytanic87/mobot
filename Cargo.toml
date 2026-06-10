@@ -27,7 +27,7 @@ thiserror = "2.0.18"
 derive_more = {version = "2.1.1", features = ["full"]}
 futures = "0.3.32"
 async-trait = "0.1.89"
-chrono = "0.4.45"
+chrono = "0.4.41"
 regex = "1.8.2"
 mobot-derive = { version = "0.1.0", path = "mobot-derive" }
 bytes = "1.11.1"
