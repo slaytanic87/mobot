@@ -4,6 +4,51 @@ use serde::{Deserialize, Serialize};
 
 use super::{chat::Chat, sticker::Sticker, user::User, Document, PhotoSize, ReplyMarkup, API};
 
+/// This object represents a point on the map.
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Location {
+    /// Latitude as defined by the sender
+    pub latitude: f64,
+    /// Longitude as defined by the sender
+    pub longitude: f64,
+    /// Optional. The radius of uncertainty for the location, measured in meters; 0-1500
+    pub horizontal_accuracy: Option<f64>,
+    /// Optional. Time relative to the message sending date, during which the location can be updated; in seconds.
+    /// For active live locations only.
+    pub live_period: Option<i64>,
+    /// Optional. The direction in which user is moving, in degrees; 1-360. For active live locations only.
+    pub heading: Option<i64>,
+    /// Optional. The maximum distance for proximity alerts about approaching another chat member, in meters.
+    /// For sent live locations only.
+    pub proximity_alert_radius: Option<i64>,
+
+}
+
+/// This object represents an audio file to be treated as music by the Telegram clients.
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Audio {
+    /// Identifier for this file, which can be used to download or reuse the file
+    pub file_id: String,
+    /// Unique identifier for this file, which is supposed to be the same over time and for different bots. 
+    /// Can't be used to download or reuse the file.
+    pub file_unique_id: String,
+    /// Duration of the audio in seconds as defined by the sender
+    pub duration: i64,
+    /// Optional. Performer of the audio as defined by the sender or by audio tags
+    pub performer: Option<String>,
+    /// Optional. Title of the audio as defined by the sender or by audio tags
+    pub title: Option<String>,
+    /// Optional. Original filename as defined by the sender
+    pub file_name: Option<String>,
+    /// Optional. MIME type of the file as defined by the sender
+    pub mime_type: Option<String>,
+    /// Optional. File size in bytes. It can be bigger than 2^31 and some programming languages may have difficulty/silent defects in interpreting it.
+    /// But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this value.
+    pub file_size: Option<i64>,
+    /// Optional. Thumbnail of the album cover to which the music file belongs
+    pub thumbnail: Option<PhotoSize>,
+}
+
 /// This object represents a service message about a new forum topic created in the chat.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ForumTopicCreated {
@@ -44,6 +89,10 @@ pub struct Message {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub photo: Option<Vec<PhotoSize>>,
 
+    /// Optional. Message is an audio file, information about the file
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub audio: Option<Audio>,
+
     /// Message is a general file, information about the file
     #[serde(skip_serializing_if = "Option::is_none")]
     pub document: Option<Document>,
@@ -53,6 +102,14 @@ pub struct Message {
     /// - For messages forwarded to the chat, the identifier of the original chat
     /// - For messages in channels, the identifier of the channel is contained in the `chat_id` field
     pub chat: Chat,
+
+    /// Optional. Caption for the animation, audio, document, paid media, photo, video or voice
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub caption: Option<String>,
+
+    /// Optional. Message is a shared location, information about the location
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub location: Option<Location>,
 
     /// For forwarded messages, sender of the original message
     #[serde(skip_serializing_if = "Option::is_none")]
