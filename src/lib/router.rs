@@ -50,6 +50,9 @@ pub enum Matcher {
 
     /// Match messages that represent a general file
     Document,
+
+    /// Match messages that represent a video
+    Video,
 }
 
 impl Matcher {
@@ -60,7 +63,7 @@ impl Matcher {
             Self::Prefix(m) => s.starts_with(m),
             Self::Regex(m) => regex::Regex::new(m).unwrap().is_match(s),
             Self::BotCommand(m) => s.starts_with(&format!("/{}", m)),
-            Self::Document | Self::Photo => false,
+            Self::Document | Self::Photo | Self::Video => false,
         }
     }
 }
@@ -174,6 +177,11 @@ impl Route {
                     .message
                     .as_ref()
                     .and_then(|m| m.document.as_ref())
+                    .is_some(),
+                Matcher::Video => update
+                    .message
+                    .as_ref()
+                    .and_then(|m| m.video.as_ref())
                     .is_some(),
                 _ => update
                     .message

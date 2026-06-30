@@ -24,6 +24,47 @@ pub struct Location {
 
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct VideoQuality {
+    /// Identifier for this file, which can be used to download or reuse the file
+    pub file_id: String,
+    /// Unique identifier for this file, which is supposed to be the same over time and for different bots. 
+    /// Can't be used to download or reuse the file.
+    pub file_unique_id: String,
+    pub width: i64,
+    pub height: i64,
+    /// Codec that was used to encode the video, for example, "h264", "h265", or "av01"
+    pub codec: String,
+    /// File size in bytes. It can be bigger than 2^31 and some programming languages may have difficulty/silent defects in interpreting it.
+    /// But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this value.
+    pub file_size: Option<i64>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Video {
+    /// Identifier for this file, which can be used to download or reuse the file
+    pub file_id: String,
+    /// Unique identifier for this file, which is supposed to be the same over time and for different bots. 
+    /// Can't be used to download or reuse the file.    
+    pub file_unique_id: String,
+    pub width: i64,
+    pub height: i64,
+    /// Duration of the video in seconds as defined by the sender
+    pub duration: i64,
+    pub thumbnail: Option<PhotoSize>,
+    /// Available sizes of the cover of the video in the message
+    pub cover: Option<Vec<PhotoSize>>,
+    /// Timestamp in seconds from which the video will play in the message    
+    pub start_timestamp: Option<i64>,
+    /// List of available qualities of the video
+    pub qualities: Option<Vec<VideoQuality>>,
+    pub file_name: Option<String>,
+    pub mime_type: Option<String>,
+    /// File size in bytes. It can be bigger than 2^31 and some programming languages may have difficulty/silent defects in interpreting it.
+    /// But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this value.
+    pub file_size: Option<i64>,
+}
+
 /// This object represents an audio file to be treated as music by the Telegram clients.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Audio {
@@ -96,6 +137,10 @@ pub struct Message {
     /// Message is a general file, information about the file
     #[serde(skip_serializing_if = "Option::is_none")]
     pub document: Option<Document>,
+
+    /// Message is a video, information about the video
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub video: Option<Video>,
 
     /// Conversation the message belongs to
     /// - For sent messages, the first available identifier of the chat
