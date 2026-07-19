@@ -457,7 +457,7 @@ impl DeleteMessageRequest {
 
 #[derive(Debug, Serialize, Clone, BotRequest)]
 pub struct ReactionType {
-    /// Type of the reaction. For tyoe "emoji", the emoji field must be set. For type "custom_emoji", the custom_emoji_id field must be set. Otherwise "paid" for paid emojis
+    /// Type of the reaction. For type "emoji", the emoji field must be set. For type "custom_emoji", the custom_emoji_id field must be set. Otherwise "paid" for paid emojis
     #[serde(rename = "type")]
     pub type_: String,
     /// Reaction emoji. Currently, it can be one of "❤", "👍", "👎", "🔥", "🥰", "👏", "😁", "🤔", "🤯",
