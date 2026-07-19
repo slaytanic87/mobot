@@ -316,6 +316,24 @@ impl BanChatMemberRequest {
     }
 }
 
+#[derive(Debug, Clone, Serialize, BotRequest)]
+pub struct AnswerChatJoinRequest {
+    /// Unique identifier for the target chat or username of the target channel in the format @username
+    pub chat_id: String,
+
+    /// Unique identifier of the target user
+    pub user_id: i64,
+}
+
+impl AnswerChatJoinRequest {
+    pub fn new(chat_id: String, user_id: i64) -> Self {
+        Self {
+            chat_id,
+            user_id
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, BotRequest)]
 pub struct UnbanChatMemberRequest {
     /// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -337,6 +355,67 @@ impl UnbanChatMemberRequest {
             only_if_banned
         }
     }
+}
+
+#[derive(Debug, Clone, Serialize, BotRequest)]
+pub struct GetChatMemberRequest {
+    /// Unique identifier for the target chat or username of the target supergroup or channel in the format @username
+    pub chat_id: String,
+
+    /// Unique identifier of the target user
+    pub user_id: i64,
+}
+
+impl GetChatMemberRequest {
+    pub fn new(chat_id: String, user_id: i64) -> Self {
+        Self {
+            chat_id,
+            user_id
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, BotRequest)]
+pub struct ChatMember {
+    /// The member's status in the chat. Can be: "creator", "administrator", "member", "restricted", "left" or "kicked"
+    pub status: String,
+
+    /// Information about the user
+    pub user: User,
+
+    /// Optional. Owner and administrators only. Custom title for this user
+    pub custom_title: Option<String>,
+
+    /// For member status "member": Date when the user's subscription will expire; Unix time.
+    /// For member status "restricted" and "kicked" only. Date when restrictions will be lifted for this user; unix time.
+    /// If 0, then the user is restricted forever
+    pub until_date: Option<i64>,
+
+    /// Optional. Administrators only. True, if the bot is allowed to edit administrator privileges of that user
+    pub can_be_edited: Option<bool>,
+
+    /// Optional. Administrators only. True, if the user's presence in the chat is hidden
+    pub is_anonymous: Option<bool>,
+
+    /// Optional. Administrators only. True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode.
+    /// Implied by any other administrator privilege
+    pub can_manage_chat: Option<bool>,
+
+    /// Optional. Administrators only. True, if the administrator can delete messages of other users
+    pub can_delete_messages: Option<bool>,
+
+    /// Optional. Administrators only. True, if the administrator can manage video chats
+    pub can_manage_video_chats: Option<bool>,
+
+    /// Optional. Administrators only. True, if the administrator can restrict, ban or unban chat members
+    pub can_restrict_members: Option<bool>,
+
+    /// Optional. Administrators only. True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that they have promoted,
+    /// directly or indirectly (promoted by administrators that were appointed by him)
+    pub can_promote_members: Option<bool>,
+
+    /// For restricted member only. True, if the user is a member of the chat at the moment of the request
+    pub is_member: Option<bool>,
 }
 
 /// API methods for sending, editing, set message permission, and deleting messages.
@@ -386,5 +465,23 @@ impl API {
     /// Returns True on success.
     pub async fn ban_chat_member(&self, req: &BanChatMemberRequest) -> anyhow::Result<bool> {
         self.client.post("banChatMember", req).await
+    }
+
+    /// Use this method to approve a chat join request.
+    /// The bot must be an administrator in the chat for this to work and must have the can_invite_users administrator right. Returns True on success.
+    pub async fn approve_chat_join_request(&self, req: &AnswerChatJoinRequest) -> anyhow::Result<bool> {
+        self.client.post("approveChatJoinRequest", req).await
+    }
+
+    /// Use this method to decline a chat join request. The bot must be an administrator in the chat for this to work and must
+    /// have the can_invite_users administrator right. Returns True on success.
+    pub async fn decline_chat_join_request(&self, req: &AnswerChatJoinRequest) -> anyhow::Result<bool> {
+        self.client.post("declineChatJoinRequest", req).await
+    }
+
+    /// Use this method to get information about a member of a chat. The method is only guaranteed to work for other users
+    /// if the bot is an administrator in the chat. Returns a ChatMember object on success.
+    pub async fn get_chat_member(&self, req: &GetChatMemberRequest) -> anyhow::Result<ChatMember> {
+        self.client.post("getChatMember", req).await
     }
 }

@@ -455,6 +455,49 @@ impl DeleteMessageRequest {
     }
 }
 
+#[derive(Debug, Serialize, Clone, BotRequest)]
+pub struct ReactionType {
+    /// Type of the reaction. For tyoe "emoji", the emoji field must be set. For type "custom_emoji", the custom_emoji_id field must be set. Otherwise "paid" for paid emojis
+    #[serde(rename = "type")]
+    pub type_: String,
+    /// Reaction emoji. Currently, it can be one of "❤", "👍", "👎", "🔥", "🥰", "👏", "😁", "🤔", "🤯",
+    ///  "😱", "🤬", "😢", "🎉", "🤩", "🤮", "💩", "🙏", "👌", "🕊", "🤡", "🥱", "🥴", "😍", "🐳", "❤‍🔥", "🌚",
+    /// "🌭", "💯", "🤣", "⚡", "🍌", "🏆", "💔", "🤨", "😐", "🍓", "🍾", "💋", "🖕", "😈", "😴", "😭", "🤓", "👻",
+    /// "👨‍💻", "👀", "🎃", "🙈", "😇", "😨", "🤝", "✍", "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒", "💘",
+    /// "🙉", "🦄", "😘", "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡".
+    pub emoji: Option<String>,
+    pub custom_emoji_id: Option<String>,
+}
+
+impl ReactionType {
+    pub fn new(type_: String, emoji: Option<String>, custom_emoji_id: Option<String>) -> Self {
+        Self {
+            type_,
+            emoji,
+            custom_emoji_id,
+        }
+    }
+}
+
+#[derive(Default, Debug, Serialize, Clone, BotRequest)]
+pub struct MessageReactionRequest {
+    pub chat_id: i64,
+    pub message_id: i64,
+    pub reaction: Option<ReactionType>,
+    pub is_big: Option<bool>,
+}
+
+impl MessageReactionRequest {
+    pub fn new(chat_id: i64, message_id: i64, reaction: Option<ReactionType>, is_big: Option<bool>) -> Self {
+        Self {
+            chat_id,
+            message_id,
+            reaction,
+            is_big,
+        }
+    }
+}
+
 /// API methods for sending, editing, and deleting messages.
 impl API {
     /// Send a message to a chat or channel.
@@ -527,5 +570,16 @@ impl API {
                 .with_reply_markup(ReplyMarkup::reply_keyboard_remove()),
         )
         .await
+    }
+
+    /// Use this method to change the chosen reactions on a message. 
+    /// Service messages of some types can't be reacted to.
+    /// Automatically forwarded messages from a channel to its discussion group have the same available reactions as messages in the channel.
+    /// Bots can't use paid reactions. Returns True on success.
+    pub async fn set_message_reaction(
+        &self,
+        req: &MessageReactionRequest,
+    ) -> anyhow::Result<bool> {
+        self.client.post("setMessageReaction", req).await
     }
 }
