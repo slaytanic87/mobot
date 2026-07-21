@@ -483,12 +483,12 @@ impl ReactionType {
 pub struct MessageReactionRequest {
     pub chat_id: i64,
     pub message_id: i64,
-    pub reaction: Option<ReactionType>,
+    pub reaction: Option<Vec<ReactionType>>,
     pub is_big: Option<bool>,
 }
 
 impl MessageReactionRequest {
-    pub fn new(chat_id: i64, message_id: i64, reaction: Option<ReactionType>, is_big: Option<bool>) -> Self {
+    pub fn new(chat_id: i64, message_id: i64, reaction: Option<Vec<ReactionType>>, is_big: Option<bool>) -> Self {
         Self {
             chat_id,
             message_id,
